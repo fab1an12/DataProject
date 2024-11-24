@@ -3,6 +3,8 @@ import pandas as pd
 from bs4 import BeautifulSoup
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
+from extractDistrict import extraer_barrios
+from CleanData.cleanDistrictName import limpiar_nombre_barrio
 
 # Configuración de MongoDB
 uri = "mongodb+srv://fabianmiulescu:DataProject2024@cluster0.dzrgu.mongodb.net/?retryWrites=true&w=majority&tlsAllowInvalidCertificates=true"
@@ -20,11 +22,8 @@ except Exception as e:
 db = client["precios_vivienda"]
 
 # Lista de barrios
-barrios = [
-    "algiros", "benicalap", "benimaclet", "camins-al-grau", "campanar", "ciutat-vella",
-    "el-pla-del-real", "extramurs", "jesus", "leixample", "lolivereta", "la-saidia",
-    "patraix", "poblats-maritims", "quatre-carreres", "rascanya"
-]
+barrios_data = extraer_barrios()
+barrios = [limpiar_nombre_barrio(barrio['nombre']) for barrio in barrios_data]
 
 # Carpeta donde están los archivos HTML
 input_folder = "~/Documents/MDA/DataProject/Data/Cost/Ventas"

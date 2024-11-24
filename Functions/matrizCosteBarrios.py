@@ -1,11 +1,19 @@
 import pandas as pd
 import numpy as np
 from pymongo import MongoClient
+from TransferData.extractDistrict import extraer_barrios
+from CleanData.cleanDistrictName import limpiar_nombre_barrio
 
-def calculate_ahp_weights(uri, database_name, barrios, year=2024):
+MONGO_URI = "mongodb+srv://fabianmiulescu:DataProject2024@cluster0.dzrgu.mongodb.net/?retryWrites=true&w=majority&tlsAllowInvalidCertificates=true"
+DB_NAME = "precios_vivienda"
+
+def calculate_ahp_weights():
+    # Obtener la lista de nombres de los barrios
+    barrios_data = extraer_barrios()
+    barrios = [limpiar_nombre_barrio(barrio['nombre']) for barrio in barrios_data]
     # Conexión a MongoDB
-    client = MongoClient(uri)
-    db = client[database_name]
+    client = MongoClient(MONGO_URI)
+    db = client[DB_NAME]
 
     # Lista para almacenar los costos medios de cada barrio
     avg_prices = []
@@ -21,7 +29,7 @@ def calculate_ahp_weights(uri, database_name, barrios, year=2024):
 
         # Crear un DataFrame con los datos del barrio
         df = pd.DataFrame(data)
-        df = df[df['Mes'].str.contains(str(year), na=False)]
+        df = df[df['Mes'].str.contains(str(2024), na=False)]
         df['Precio m2'] = (
             df['Precio m2']
             .str.replace('€/m2', '', regex=False)
@@ -51,4 +59,6 @@ def calculate_ahp_weights(uri, database_name, barrios, year=2024):
     # Calcular los pesos AHP
     weights = normalized_matrix.mean(axis=1)
 
-    return weights
+    barrio_weights = dict(zip(barrios, weights))
+
+    return barrio_weights
