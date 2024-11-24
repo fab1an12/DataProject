@@ -10,7 +10,7 @@ DB_NAME = "precios_vivienda"
 def calculate_ahp_weights():
     # Obtener la lista de nombres de los barrios
     barrios_data = extraer_barrios()
-    barrios = [limpiar_nombre_barrio(barrio['nombre']) for barrio in barrios_data]
+    barrios = sorted([limpiar_nombre_barrio(barrio['nombre']) for barrio in barrios_data])
     # Conexión a MongoDB
     client = MongoClient(MONGO_URI)
     db = client[DB_NAME]

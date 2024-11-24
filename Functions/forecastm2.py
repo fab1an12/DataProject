@@ -5,20 +5,27 @@ from sklearn.ensemble import RandomForestRegressor
 import matplotlib.pyplot as plt
 import locale
 import numpy as np
+from TransferData.extractDistrict import extraer_barrios
+from CleanData.cleanDistrictName import limpiar_nombre_barrio
 
-def predict_and_plot_prices(uri, database_name, barrio):
+MONGO_URI = "mongodb+srv://fabianmiulescu:DataProject2024@cluster0.dzrgu.mongodb.net/?retryWrites=true&w=majority&tlsAllowInvalidCertificates=true"
+DB_NAME = "precios_vivienda"
+
+def predict_and_plot_prices():
     # Configurar el idioma local a español
     locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
-
+    barrios_data = extraer_barrios()
+    barrios = sorted([limpiar_nombre_barrio(barrio['nombre']) for barrio in barrios_data])
+    
     # Conexión a MongoDB
-    client = MongoClient(uri)
-    db = client[database_name]
+    client = MongoClient(MONGO_URI)
+    db = client[DB_NAME]
 
     # Obtener los datos del barrio
-    collection = db[barrio]
-    data = list(collection.find({}, {"_id": 0}))  # Excluir _id
+    collection = db[barrios]
+    data = list(collection.find({}, {"_id": 0}))
     if not data:
-        raise ValueError(f"No se encontraron datos para el barrio '{barrio}'.")
+        raise ValueError(f"No se encontraron datos para el barrio '{barrios}'.")
 
     df = pd.DataFrame(data)
 
@@ -31,7 +38,7 @@ def predict_and_plot_prices(uri, database_name, barrio):
     # Eliminar filas con valores nulos
     df = df.dropna(subset=['Mes', 'Precio m2'])
     if df.empty:
-        raise ValueError(f"Todos los datos de '{barrio}' son inválidos después de eliminar nulos.")
+        raise ValueError(f"Todos los datos de '{barrios}' son inválidos después de eliminar nulos.")
 
     # Ordenar por fecha
     df = df.sort_values(by='Mes')
@@ -76,7 +83,7 @@ def predict_and_plot_prices(uri, database_name, barrio):
     plt.figure(figsize=(10, 6))
     plt.plot(df['Mes'], df['Precio m2'], label="Histórico", marker='o')
     plt.plot(future_data['Mes'], future_data['Precio m2'], label="Predicción", marker='x', linestyle='--', color='red')
-    plt.title(f"Evolución del Precio m2 - {barrio}")
+    plt.title(f"Evolución del Precio m2 - {barrios}")
     plt.xlabel("Mes")
     plt.ylabel("Precio m2 (€)")
     plt.legend()
