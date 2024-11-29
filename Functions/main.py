@@ -1,5 +1,4 @@
 import streamlit as st
-from forecastm2 import predict_and_plot_prices
 import matplotlib.pyplot as plt
 
 # Configuración de Streamlit
@@ -23,7 +22,7 @@ barrio = st.selectbox("Seleccione un barrio:", barrios)
 if st.button("Predecir y Mostrar Gráfica"):
     try:
         # Llamar a la función para obtener la gráfica
-        grafico = predict_and_plot_prices(uri, database_name, barrio)
+        grafico = 1
 
         # Mostrar la gráfica en Streamlit
         st.pyplot(grafico)

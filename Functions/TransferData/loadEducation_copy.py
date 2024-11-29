@@ -1,15 +1,14 @@
 import pandas as pd
 import requests
 from io import StringIO
-import psycopg2
-from psycopg2 import sql
+import pg8000
 
 # URL del archivo CSV
 url_centros_educativos = "https://valencia.opendatasoft.com/api/explore/v2.1/catalog/datasets/centros-educativos-en-valencia/exports/csv?lang=es&timezone=Europe%2FBerlin&use_labels=true&delimiter=%3B"
 
 # Configuración de la conexión inicial para el servidor
 SERVER_CONFIG = {
-    "dbname": "postgres",
+    "database": "postgres",
     "user": "postgres",
     "password": "Welcome01",
     "host": "localhost",
@@ -19,7 +18,7 @@ SERVER_CONFIG = {
 # Configuración para la nueva base de datos
 DB_NAME = "dataproject"
 DB_CONFIG = {
-    "dbname": DB_NAME,
+    "database": DB_NAME,
     "user": "postgres",
     "password": "Welcome01",
     "host": "localhost",
@@ -27,26 +26,24 @@ DB_CONFIG = {
 }
 
 def verificar_o_crear_base_datos(server_config, db_name):
-    try:
-        connection = psycopg2.connect(**server_config)
-        connection.autocommit = True
-        cursor = connection.cursor()
+    connection = pg8000.connect(**server_config)
+    connection.autocommit = True
+    cursor = connection.cursor()
 
-        cursor.execute(
-            sql.SQL("SELECT 1 FROM pg_database WHERE datname = %s"),
-            [db_name]
-        )
-        if cursor.fetchone() is None:
-            cursor.execute(sql.SQL("CREATE DATABASE {}").format(sql.Identifier(db_name)))
-            print(f"Base de datos '{db_name}' creada.")
-        else:
-            print(f"La base de datos '{db_name}' ya existe.")
-    except Exception as e:
-        print(f"Error al verificar o crear la base de datos: {e}")
-    finally:
-        if connection:
-            cursor.close()
-            connection.close()
+    # Verificar si la base de datos existe
+    cursor.execute(
+        "SELECT 1 FROM pg_database WHERE datname = %s",
+        (db_name,)
+    )
+    if not cursor.fetchone():
+        # Crear la base de datos si no existe
+        cursor.execute(f"CREATE DATABASE {db_name}")
+        print(f"Base de datos '{db_name}' creada.")
+    else:
+        print(f"La base de datos '{db_name}' ya existe.")
+
+    cursor.close()
+    connection.close()
 
 def descargar_csv_a_df(url):
     try:
@@ -61,7 +58,7 @@ def descargar_csv_a_df(url):
         return None
 
 def crear_tabla_centros_y_insertar_datos(df, db_config):
-    connection = psycopg2.connect(**db_config)
+    connection = pg8000.connect(**db_config)
     cursor = connection.cursor()
 
     # Crear la tabla
