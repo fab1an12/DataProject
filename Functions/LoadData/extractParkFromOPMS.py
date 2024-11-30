@@ -2,7 +2,7 @@ import requests
 import pandas as pd
 from extractDistrict import extraer_barrios_sql
 
-def contar_parques_en_barrios(barrios_lista):
+def contar_parques_en_barrios():
     """
     Toma una lista de diccionarios con nombres de barrios y sus coordenadas, 
     y devuelve un DataFrame con el número de parques en cada barrio.
@@ -12,7 +12,7 @@ def contar_parques_en_barrios(barrios_lista):
     """
     overpass_url = "https://overpass-api.de/api/interpreter"  # URL del servicio de Overpass
     resultados = []
-    
+    barrios_lista = extraer_barrios_sql()
     for barrio in barrios_lista:
         nombre = barrio["nombre"]
         query = f"""
@@ -47,8 +47,3 @@ def contar_parques_en_barrios(barrios_lista):
     # Convertir los resultados en un DataFrame
     df_resultados = pd.DataFrame(resultados)
     return df_resultados
-
-# Llamada al método
-barrios_lista = extraer_barrios_sql()  # Asegúrate de tener esta función definida
-df_parques = contar_parques_en_barrios(barrios_lista)
-print(df_parques)
