@@ -1,30 +1,23 @@
-import psycopg2
 import json
-from dotenv import load_dotenv
-import os
+import psycopg2
 
-load_dotenv()
 
-DB_HOST = os.getenv("DB_HOST")
-DB_USER = os.getenv("DB_USER")
-DB_PASSWORD = os.getenv("DB_PASSWORD")
-DB_NAME = os.getenv("DB_NAME")
-DB_PORT = os.getenv("DB_PORT")
+db_config = {
+    "dbname": "dataproject",
+    "user": "postgres",
+    "password": "Welcome01",
+    "host": "localhost",
+    "port": 5432
+}
 
 def extraer_barrios_sql():
-    connection = psycopg2.connect(
-        host=DB_HOST,
-        user=DB_USER,
-        password=DB_PASSWORD,
-        database=DB_NAME,
-        port=DB_PORT
-    )
+    connection = psycopg2.connect(**db_config)
     
     try:
         with connection.cursor() as cursor:
-            query = "SELECT nombre, geo_shape FROM distritos"
+            query = "SELECT nombre_corregido, geo_shape FROM distritos"
             cursor.execute(query)
-            
+                
             barrios_lista = []
             for row in cursor.fetchall():
                 nombre, geo_shape = row
@@ -32,11 +25,7 @@ def extraer_barrios_sql():
                 geo_shape_dict = json.loads(geo_shape)
                 coordenadas = geo_shape_dict["coordinates"]
                 barrios_lista.append({"nombre": nombre, "coordenadas": coordenadas})
-                
+                    
             return barrios_lista
     finally:
         connection.close()
-
-# Llamada a la función
-barrios = extraer_barrios_sql()
-print(barrios)
