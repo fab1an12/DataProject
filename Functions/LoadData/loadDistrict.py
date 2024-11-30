@@ -4,8 +4,10 @@ from io import StringIO
 import psycopg2
 from psycopg2 import sql
 
-url_alquiler = "https://valencia.opendatasoft.com/api/explore/v2.1/catalog/datasets/precio-alquiler-vivienda/exports/csv?lang=es&timezone=Europe%2FBerlin&use_labels=true&delimiter=%3B"
+# URL del archivo CSV
+url = "https://valencia.opendatasoft.com/api/explore/v2.1/catalog/datasets/districtes-distritos/exports/csv?lang=es&timezone=Europe%2FBerlin&use_labels=true&delimiter=%3B"
 
+# Configuración de la conexión inicial para el servidor
 SERVER_CONFIG = {
     "dbname": "postgres",
     "user": "postgres",
@@ -14,6 +16,7 @@ SERVER_CONFIG = {
     "port": 5432
 }
 
+# Configuración para la nueva base de datos
 DB_NAME = "dataproject"
 DB_CONFIG = {
     "dbname": DB_NAME,
@@ -22,7 +25,6 @@ DB_CONFIG = {
     "host": "localhost",
     "port": 5432
 }
-
 
 def verificar_o_crear_base_datos(server_config, db_name):
     try:
@@ -55,35 +57,14 @@ def descargar_csv_a_df(url):
         response = requests.get(url)
         response.raise_for_status()
 
-        df = pd.read_csv(StringIO(response.text), sep=';')
-        columnas_a_limpiar = ['Año_Max_Hist']
-        
-        df = df.dropna(subset=columnas_a_limpiar)
-
-        # Crear la nueva columna 'CodDistrit' según la lógica de 'CodBar-CodDistrit'
-        if 'CodBar-CodDistrit' in df.columns:
-            df['CodDistrit'] = df['CodBar-CodDistrit'].astype(str).apply(
-                lambda x: x[:2] if len(x) == 3 else x[:1]
-            )
-        
-        for col in columnas_a_limpiar:
-            if col in df.columns:
-                # Convertir la columna a string primero
-                df[col] = df[col].astype(str)
-                # Reemplazar comas por puntos
-                df[col] = df[col].str.replace(',', '.')
-                # Convertir a float y luego a entero
-                df[col] = pd.to_numeric(df[col], errors='coerce')
-                df[col] = df[col].astype(int)
-        
-        print(df.columns)
+        csv_data = StringIO(response.text)
+        df = pd.read_csv(csv_data, sep=';')
+        print(f"CSV cargado con {len(df)} registros.")
         return df
-    
     except Exception as e:
         print(f"Error al descargar o procesar el CSV: {e}")
         return None
 
-    
 def crear_tabla_y_insertar_datos(df, db_config):
     # Conexión a la base de datos
     connection = psycopg2.connect(**db_config)
@@ -91,40 +72,42 @@ def crear_tabla_y_insertar_datos(df, db_config):
 
     # Crear la tabla
     create_table_query = """
-    CREATE TABLE IF NOT EXISTS precios_alquiler (
-        distrito VARCHAR(255),
-        barrio VARCHAR(255) PRIMARY KEY,
-        Precio_2022_Euros_m2 FLOAT,
-        Precio_2010_Euros_m2 FLOAT,
-        Max_historico_Euros_m2 FLOAT,
-        Año_Max_Hist INT,
-        CodBar_CodDistrit INT,
-        CodDistrit INT
-
+    CREATE TABLE IF NOT EXISTS distritos (
+        id SERIAL PRIMARY KEY,
+        objectid INT,
+        nombre VARCHAR(255),
+        codigo_distrito INT,
+        area FLOAT,
+        geo_shape TEXT,
+        geo_point_2d VARCHAR(255),
+        latitud FLOAT,
+        longitud FLOAT
     );
     """
     cursor.execute(create_table_query)
-
+    print("Tabla 'distritos' creada o verificada correctamente.")
+     
     # Insertar los datos
     insert_query = """
-    INSERT INTO precios_alquiler (distrito, barrio, Precio_2022_Euros_m2, Precio_2010_Euros_m2, Max_historico_Euros_m2, Año_Max_Hist, CodBar_CodDistrit, CodDistrit)
+    INSERT INTO distritos (objectid, nombre, codigo_distrito, area, geo_shape, geo_point_2d, latitud, longitud)
     VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
     """
-    
     for _, row in df.iterrows():
+        geo_point_split = str(row['geo_point_2d']).split(',')
+        latitud = float(geo_point_split[0]) if len(geo_point_split) > 1 else None
+        longitud = float(geo_point_split[1]) if len(geo_point_split) > 1 else None
+
         # Ejecutar la inserción
         cursor.execute(insert_query, (
-            row['DISTRITO'],               
-            row['BARRIO'],               
-            float(row['Precio_2022 (Euros/m2)']),         
-            float(row['Precio_2010 (Euros/m2)']),                  
-            float(row['Max_historico (Euros/m2)']),  
-            int(row['Año_Max_Hist']),        
-            int(row['CodBar-CodDistrit']),
-            int(row['CodDistrit'])
-
-            ))
-
+            int(row['objectid']),
+            row['Nombre'],
+            int(row['Código distrito']),
+            float(row['gis.gis.DISTRITOS.area']),
+            row['geo_shape'],
+            row['geo_point_2d'],
+            latitud,
+            longitud
+        ))
 
     # Confirmar los cambios
     connection.commit()
@@ -137,7 +120,7 @@ def crear_tabla_y_insertar_datos(df, db_config):
 verificar_o_crear_base_datos(SERVER_CONFIG, DB_NAME)
 
 # Descargar el CSV y procesar los datos
-df = descargar_csv_a_df(url_alquiler)
+df = descargar_csv_a_df(url)
 
 if df is not None:
     # Crear tabla y cargar datos en la base de datos

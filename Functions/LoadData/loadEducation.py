@@ -55,6 +55,7 @@ def descargar_csv_a_df(url):
 
         csv_data = StringIO(response.text)
         df = pd.read_csv(csv_data, sep=';')
+        print(f"CSV cargado con {len(df)} registros.")
         return df
     except Exception as e:
         print(f"Error al descargar o procesar el CSV: {e}")
@@ -86,6 +87,7 @@ def crear_tabla_centros_y_insertar_datos(df, db_config):
     );
     """
     cursor.execute(create_table_query)
+    print("Tabla 'centros_educativos' creada o verificada correctamente.")
 
     # Insertar los datos
     insert_query = """
