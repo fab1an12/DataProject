@@ -92,8 +92,9 @@ def crear_tabla_y_insertar_datos(df, db_config):
     # Crear la tabla
     create_table_query = """
     CREATE TABLE IF NOT EXISTS precios_alquiler (
+        id SERIAL PRIMARY KEY,
         distrito VARCHAR(255),
-        barrio VARCHAR(255) PRIMARY KEY,
+        barrio VARCHAR(255),
         Precio_2022_Euros_m2 FLOAT,
         Precio_2010_Euros_m2 FLOAT,
         Max_historico_Euros_m2 FLOAT,

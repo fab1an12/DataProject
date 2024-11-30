@@ -68,11 +68,10 @@ def crear_tabla_centros_y_insertar_datos(df, db_config):
     # Crear la tabla
     create_table_query = """
     CREATE TABLE IF NOT EXISTS centros_educativos (
-        latitud VARCHAR(255),
-        longitud VARCHAR(255),
+        id SERIAL PRIMARY KEY,
         Geo_Point VARCHAR(255),
         Geo_Shape TEXT,
-        codcen INT PRIMARY KEY,
+        codcen INT,
         dlibre VARCHAR(255),
         dgenerica VARCHAR(255),
         despecific VARCHAR(255),
@@ -92,21 +91,16 @@ def crear_tabla_centros_y_insertar_datos(df, db_config):
     # Insertar los datos
     insert_query = """
     INSERT INTO centros_educativos (
-        latitud, longitud, Geo_Point, Geo_Shape, codcen, dlibre, dgenerica, despecific, regimen,
+        Geo_Point, Geo_Shape, codcen, dlibre, dgenerica, despecific, regimen,
         direccion, codpos, municipio, provincia, telef, fax, mail
     ) VALUES (
-        %s,%s,%s,%s,
+        %s,%s,
         %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
     );
     """
     for _, row in df.iterrows():
-        geo_point_split = str(row['Geo Point']).split(',')
-        latitud = float(geo_point_split[0]) if len(geo_point_split) > 1 else None
-        longitud = float(geo_point_split[1]) if len(geo_point_split) > 1 else None
 
         cursor.execute(insert_query, (
-            longitud,
-            latitud,
             row['Geo Point'],
             row['Geo Shape'],
             int(row['codcen']),

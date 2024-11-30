@@ -63,7 +63,8 @@ def crear_tabla_transporte_y_insertar_datos(df, db_config):
                 # Crear la tabla
                 create_table_query = """
                 CREATE TABLE IF NOT EXISTS transporte_publico (
-                    geo_point VARCHAR(255) UNIQUE,
+                    id SERIAL PRIMARY KEY,
+                    geo_point VARCHAR(255),
                     geo_shape TEXT,
                     codbarrio INT,
                     nombre VARCHAR(255),
@@ -88,7 +89,7 @@ def crear_tabla_transporte_y_insertar_datos(df, db_config):
                     geo_point, geo_shape, codbarrio, nombre, coddistbar, coddistrit, codbar, transporte,
                     stop_id, stop_name, stop_desc, x, y, zone_id
                 ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-                ON CONFLICT (geo_point) DO NOTHING;
+                ;
                 """
                 for _, row in df.iterrows():
                     cursor.execute(insert_query, (

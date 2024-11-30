@@ -97,8 +97,7 @@ def crear_tabla_y_insertar_datos(df, db_config):
     # Crear la tabla
     create_table_query = """
     CREATE TABLE IF NOT EXISTS distritos (
-        id SERIAL PRIMARY KEY,
-        objectid INT,
+        objectid INT PRIMARY KEY,
         nombre VARCHAR(255),
         nombre_corregido VARCHAR(255),
         codigo_distrito INT,

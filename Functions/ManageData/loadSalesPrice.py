@@ -89,10 +89,11 @@ def crear_tabla_y_insertar_datos(df, db_config):
     # Crear la tabla
     create_table_query = """
     CREATE TABLE IF NOT EXISTS precios_compra (
+        id SERIAL PRIMARY KEY,
         Geo_Point VARCHAR(255),
         Geo_Shape TEXT,
         coddistbar INT,
-        barrio VARCHAR(255) PRIMARY KEY,
+        barrio VARCHAR(255),
         codbarrio INT,
         coddistrit INT,
         distrito VARCHAR(255),
