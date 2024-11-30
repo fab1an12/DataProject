@@ -65,7 +65,13 @@ def descargar_csv_a_df(url):
 
         for col in columnas_a_limpiar:
             if col in df.columns:
-                df[col] = df[col].astype(str).str.replace(r'\.', '', regex=True).astype(int)
+                # Convertir la columna a string primero
+                df[col] = df[col].astype(str)
+                # Reemplazar comas por puntos
+                df[col] = df[col].str.replace(',', '.')
+                # Convertir a float y luego a entero
+                df[col] = pd.to_numeric(df[col], errors='coerce')
+                df[col] = df[col].astype(int)
         
         print(df.columns)
         return df
