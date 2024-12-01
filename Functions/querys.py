@@ -116,7 +116,7 @@ def obtener_escuelas():
         cursor.execute(query)
         resultados = cursor.fetchall()
         # Convertir los resultados a un DataFrame de pandas
-        df = pd.DataFrame(resultados, columns=["codigo_distrito", "nombre_distrito", "total_centros_educativos"])
+        df = pd.DataFrame(resultados, columns=["codigo_distrito", "distrito", "total_centros_educativos"])
         return df
     except Exception as e:
         print(f"Error al ejecutar la consulta: {e}")
