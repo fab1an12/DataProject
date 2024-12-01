@@ -31,7 +31,3 @@ def calcular_matriz_ahp_servicios_publicos():
     df_pesos = pd.DataFrame({"Distrito": df_combined["distrito"], "Peso": pesos})
     
     return df_pesos
-
-# Ejemplo de uso
-a = calcular_matriz_ahp_servicios_publicos()
-print(a)

@@ -25,7 +25,3 @@ def calcular_matriz_ahp_ocio():
     df_pesos = pd.DataFrame({"Distrito": df["distrito"], "Peso": pesos})
     
     return df_pesos
-
-# Ejemplo de uso
-a = calcular_matriz_ahp_ocio()
-print(a)

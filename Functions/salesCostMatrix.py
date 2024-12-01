@@ -24,6 +24,3 @@ def calcular_matriz_ahp_coste_compra():
     df_pesos = pd.DataFrame({"Distrito": df["nombre_distrito"], "Peso": pesos})
     
     return df_pesos
-
-a = calcular_matriz_ahp_coste_compra()
-print(a)

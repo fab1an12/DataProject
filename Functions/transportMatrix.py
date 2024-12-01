@@ -25,5 +25,3 @@ def calcular_matriz_ahp_transporte():
     df_pesos = pd.DataFrame({"Distrito": df["distrito"], "Peso": pesos})
     
     return df_pesos
-a = calcular_matriz_ahp_transporte()
-print(a)
