@@ -126,13 +126,23 @@ st.markdown("<h1>Calcula tu Casa Ideal</h1>", unsafe_allow_html=True)
 
 # Barra lateral
 st.sidebar.header("Opciones")
-alquiler = st.sidebar.checkbox("Alquiler")
-compra = st.sidebar.checkbox("Compra")
+opcion = st.sidebar.radio("Seleccione una opción:", ["Alquiler", "Compra"])
+
+# Lógica según la selección
+if opcion == "Alquiler":
+    st.write("Has seleccionado la opción de Alquiler.")
+elif opcion == "Compra":
+    st.write("Has seleccionado la opción de Compra.")
 
 st.sidebar.header("Preferencias")
-habitaciones = st.sidebar.selectbox("Número de habitaciones", [1, 2, 3, 4, 5, 6, 7, 8, 9], key="habitaciones")
-baños = st.sidebar.selectbox("Número de baños", [1, 2, 3, 4, 5, 6, 7, 8, 9], key="baños")
-parking = st.sidebar.selectbox("Plazas de parking", [1, 2, 3, 4, 5, 6, 7, 8, 9], key="parking")
+import streamlit as st
+
+with st.sidebar:
+    st.header("Filtros de búsqueda")
+    habitaciones = st.slider("Número de habitaciones", min_value=1, max_value=9, value=1, key="habitaciones")
+    baños = st.slider("Número de baños", min_value=1, max_value=9, value=1, key="baños")
+    parking = st.slider("Plazas de parking", min_value=1, max_value=9, value=1, key="parking")
+
 
 # Botón funcional
 calcular_btn = st.sidebar.button("Calcular tu casa ideal")
@@ -190,7 +200,7 @@ st.markdown('</div>', unsafe_allow_html=True)
 # Acción del botón
 if calcular_btn:
     st.subheader("Resultado")
-    tipo_vivienda = "alquiler" if alquiler else "compra" if compra else "ninguno"
+    tipo_vivienda = "alquiler" if opcion == "Alquiler"  else "compra" if opcion == "Compra" else "ninguno"
     st.write(f"Has elegido una casa para **{tipo_vivienda}** con:")
     st.write(f"- **{habitaciones} habitaciones**")
     st.write(f"- **{baños} baños**")
