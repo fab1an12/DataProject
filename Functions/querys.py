@@ -1,17 +1,15 @@
 import psycopg2
 import pandas as pd
 
-# Configuración de la base de datos
-db_config = {
+#Query para Compra
+def obtener_coste_compra():
+    db_config = {
     "dbname": "dataproject",
     "user": "postgres",
     "password": "Welcome01",
     "host": "localhost",
     "port": 5432
-}
-
-#Query para Compra
-def obtener_coste_compra(db_config):
+    }
     query = """
     SELECT coddistrit AS codigo_distrito, distrito AS nombre_distrito, ROUND(CAST(AVG(precio_2022_euros_m2) AS NUMERIC), 2) AS precio_medio_2022_m2
     FROM precios_compra
@@ -34,7 +32,14 @@ def obtener_coste_compra(db_config):
             cursor.close()
             connection.close()
 #Query para Alquiler
-def obtener_coste_alquiler(db_config):
+def obtener_coste_alquiler():
+    db_config = {
+    "dbname": "dataproject",
+    "user": "postgres",
+    "password": "Welcome01",
+    "host": "localhost",
+    "port": 5432
+    }
     query = """
     SELECT coddistrit AS codigo_distrito, distrito AS nombre_distrito, ROUND(CAST(AVG(precio_2022_euros_m2) AS NUMERIC), 2) AS precio_medio_2022_m2
     FROM precios_alquiler
@@ -57,7 +62,14 @@ def obtener_coste_alquiler(db_config):
             cursor.close()
             connection.close()
 #Query para Transporte
-def obtener_transporte(db_config):
+def obtener_transporte():
+    db_config = {
+    "dbname": "dataproject",
+    "user": "postgres",
+    "password": "Welcome01",
+    "host": "localhost",
+    "port": 5432
+    }
     query = """
     SELECT d.codigo_distrito AS codigo_distrito, d.nombre_corregido AS distrito, COUNT(tp.id) AS total_transporte
     FROM distritos d
@@ -82,7 +94,14 @@ def obtener_transporte(db_config):
             cursor.close()
             connection.close()
 #Query para Escuelas          
-def obtener_escuelas(db_config):
+def obtener_escuelas():
+    db_config = {
+    "dbname": "dataproject",
+    "user": "postgres",
+    "password": "Welcome01",
+    "host": "localhost",
+    "port": 5432
+    }
     query = """
     SELECT d.cod_dist AS codigo_distrito, d.nombre AS nombre_distrito, COUNT(c.id) AS total_centros_educativos
     FROM distritos_cp d
@@ -107,7 +126,14 @@ def obtener_escuelas(db_config):
             cursor.close()
             connection.close()
 #Query para Hospitales
-def obtener_hospitales(db_config):
+def obtener_hospitales():
+    db_config = {
+    "dbname": "dataproject",
+    "user": "postgres",
+    "password": "Welcome01",
+    "host": "localhost",
+    "port": 5432
+    }
     query = """
     SELECT d.codigo_distrito AS codigo_distrito, d.nombre_corregido AS distrito, COUNT(cs.id) AS total_hospitales
     FROM distritos d
@@ -132,7 +158,14 @@ def obtener_hospitales(db_config):
             cursor.close()
             connection.close()
 #Query para Ocio
-def obtener_ocio(db_config):
+def obtener_ocio():
+    db_config = {
+    "dbname": "dataproject",
+    "user": "postgres",
+    "password": "Welcome01",
+    "host": "localhost",
+    "port": 5432
+    }
     query = """
     SELECT barrio AS distrito, numero_ocio
     FROM zonas_de_ocio
@@ -154,7 +187,14 @@ def obtener_ocio(db_config):
             cursor.close()
             connection.close()
 #Query para Zonas Verdes       
-def obtener_zonas_verdes(db_config):
+def obtener_zonas_verdes():
+    db_config = {
+    "dbname": "dataproject",
+    "user": "postgres",
+    "password": "Welcome01",
+    "host": "localhost",
+    "port": 5432
+    }
     query = """
     SELECT barrio AS distrito, numero_parques AS zonas_verdes
     FROM zonas_verdes
