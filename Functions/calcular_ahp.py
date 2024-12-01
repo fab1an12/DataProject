@@ -83,7 +83,7 @@ def calcular_barrio_ideal(
 
     # Crear un DataFrame con los resultados
     df_resultados = pd.DataFrame({
-        "Distrito": matriz_costes["Distrito"],  # Usamos los nombres de los barrios de cualquier matriz
+        "Distrito": matriz_zonas_verdes["Distrito"],  # Usamos los nombres de los barrios de cualquier matriz
         "Puntuación": puntuaciones_finales
     }).sort_values(by="Puntuación", ascending=False)
 
