@@ -1,4 +1,5 @@
 import numpy as np
+import openai
 import pandas as pd
 from greenZonesMatrix import calcular_matriz_ahp_zonas_verdes
 from publicServicesMatrix import calcular_matriz_ahp_servicios_publicos
@@ -86,8 +87,29 @@ def calcular_barrio_ideal(
         "Puntuación": puntuaciones_finales
     }).sort_values(by="Puntuación", ascending=False)
     top_3_barrios = df_resultados["Distrito"].head(3).tolist()
+    df_top_3 = df_resultados.head(8).copy()
+    df_top_3.insert(0, "Ranking", range(1, len(df_top_3) + 1))
+    df_top_3 = df_top_3.reset_index(drop=True)
 
+    prompt = f"""
+        El mejor distrito es:
+        1. {top_3_barrios[0]}
+        Tienes que darme una descripcion detallada de porque es una zona ideal para vivir para en base a al
+        Coste,Transporte, servicios Publicos y Zonas Verdes. Di cosas reales de cada criterio pero no hagas mas de 
+        6 lineas por cada. La estructura debe ser, intro-criterio-criterio-criterio-criterio
+        """
+    openai.api_key = "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"
+    response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "Eres un experto en urbanismo y análisis de distritos."},
+                {"role": "user", "content": prompt}
+            ],
+            max_tokens=350
+        )    
+    texto = response["choices"][0]["message"]["content"]
+   
     # Devolver el DataFrame ordenado
-    return df_resultados, top_3_barrios, pesos_criterios
+    return df_resultados, top_3_barrios, pesos_criterios, df_top_3, texto
 
-print(calcular_barrio_ideal("Alquiler",generar_pesos_criterios(4,5,9,1/4,4,3)))
+# print(calcular_barrio_ideal("Alquiler",generar_pesos_criterios(1,1,1,1,1,1)))

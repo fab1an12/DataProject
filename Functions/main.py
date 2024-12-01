@@ -1,11 +1,15 @@
 import streamlit as st
 import pydeck as pdk
 import pandas as pd
+from createTop3Polygons import extraer_top3_poligonos_sql
+from calcular_ahp import generar_pesos_criterios
+from calcular_ahp import calcular_barrio_ideal
 from createPolygons import extraer_poligonos_sql
 
 # Configuración de la página
 st.set_page_config(page_title="Calcula tu casa ideal", layout="wide", initial_sidebar_state="expanded")
 
+# Estilos globales y personalizados
 # Estilos globales y personalizados
 st.markdown(
     """
@@ -14,18 +18,18 @@ st.markdown(
     html, body, [data-testid="stAppViewContainer"], [data-testid="stApp"] {
         background-color: #1c1c1c;
         color: white;
-        font-family: 'Roboto', sans-serif;
+        font-family: 'Comic Sans';
     }
     
     /* Título principal */
     h1 {
-        font-size: 2.5rem;
+        font-size: 2rem;
         color: #4CAF50;
         text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
         margin-bottom: 20px;
         text-align: center;
     }
-    
+
     /* Contenedor centrado */
     .center-container {
         display: flex;
@@ -93,28 +97,37 @@ st.markdown(
         padding: 2px !important;
     }
 
-    /* Checkbox personalizado */
-    .stCheckbox>div {
+    /* Radio button personalizado */
+    [data-testid="stSidebar"] div[role="radiogroup"] {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    [data-testid="stSidebar"] div[role="radiogroup"] label {
         display: flex;
         align-items: center;
-    }
-    .stCheckbox>div>label {
-        color: #4CAF50;
-        font-weight: bold;
+        gap: 10px;
         font-size: 16px;
-    }
-    .stCheckbox>div>input {
-        width: 20px;
-        height: 20px;
-        margin-right: 10px;
+        font-weight: bold;
+        color: #4CAF50;
         cursor: pointer;
-        border: 2px solid #4CAF50;
-        border-radius: 4px;
+        padding: 5px 10px;
+        border-radius: 5px;
         transition: all 0.3s ease;
     }
-    .stCheckbox>div>input:checked {
-        background: #4CAF50;
-        border-color: #45a049;
+    
+    [data-testid="stSidebar"] div[role="radiogroup"] label:hover {
+        background-color: rgba(76, 175, 80, 0.1);
+        color: #32a852;
+    }
+    
+    [data-testid="stSidebar"] div[role="radiogroup"] input[type="radio"] {
+        accent-color: #4CAF50;
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
     }
     </style>
     """,
@@ -122,26 +135,48 @@ st.markdown(
 )
 
 # Título principal
-st.markdown("<h1>Calcula tu Casa Ideal</h1>", unsafe_allow_html=True)
+st.markdown(
+    """
+    <h1 style="
+        font-size: 3rem;
+        font-family: 'Poppins', sans-serif;
+        text-transform: uppercase;
+        color: #4CAF50;
+        margin-bottom: 30px;
+        text-align: center;
+        letter-spacing: 1.5px;
+    ">
+        ¿Cuál es tu distrito ideal?
+    </h1>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 
 # Barra lateral
-st.sidebar.header("Opciones")
-opcion = st.sidebar.radio("Seleccione una opción:", ["Alquiler", "Compra"])
+opcion = st.sidebar.radio("¿Qué tipo de vivienda buscas?", ["Alquiler", "Compra"])
 
 # Lógica según la selección
 if opcion == "Alquiler":
-    st.write("Has seleccionado la opción de Alquiler.")
+    tipo_vivienda = opcion
 elif opcion == "Compra":
-    st.write("Has seleccionado la opción de Compra.")
-
-st.sidebar.header("Preferencias")
-import streamlit as st
+    tipo_vivienda = opcion
 
 with st.sidebar:
-    st.header("Filtros de búsqueda")
-    habitaciones = st.slider("Número de habitaciones", min_value=1, max_value=9, value=1, key="habitaciones")
-    baños = st.slider("Número de baños", min_value=1, max_value=9, value=1, key="baños")
-    parking = st.slider("Plazas de parking", min_value=1, max_value=9, value=1, key="parking")
+    st.subheader("Selecciona la importancia relativa entre los criterios en comparación por pares:")
+    st.markdown("""
+    - **1:** Ambos criterios tienen igual importancia.
+    - **Mayor que 1:** El criterio a la izquierda es más importante que el de la derecha.
+    - **Menor que 1 (por ejemplo, 1/3):** El criterio a la derecha es más importante que el de la izquierda.
+    """)
+    c_tr = st.slider("Costes vs Transporte", min_value=1/5, max_value=5.0, value=1.0, key="c_tr")
+    c_sp = st.slider("Costes vs Servicios Públicos", min_value=1/5, max_value=5.0, value=1.0, key="c_sp")
+    c_zv = st.slider("Costes vs Zonas Verdes", min_value=1/5, max_value=5.0, value=1.0, key="c_zv")
+    tr_sp = st.slider("Transporte vs Servicios Públicos", min_value=1/5, max_value=5.0, value=1.0, key="tr_sp")
+    tr_zv = st.slider("Transporte vs Zonas Verdes", min_value=1/5, max_value=5.0, value=1.0, key="tr_zv")
+    sp_zv = st.slider("Servicios Públicos vs Zonas Verdes", min_value=1/5, max_value=5.0, value=1.0, key="sp_zv")
 
 
 # Botón funcional
@@ -184,25 +219,68 @@ layer = pdk.Layer(
     get_line_color=[0, 160, 0],
     get_fill_color=[76, 175, 80,50],
 )
+
+
+# Acción del botón
+if calcular_btn:
+    pesos_criterios = generar_pesos_criterios(c_tr,c_sp,c_zv,tr_sp,tr_zv,sp_zv)
+    barrio_ideal = calcular_barrio_ideal(tipo_vivienda,pesos_criterios)
+    polygons = extraer_top3_poligonos_sql(barrio_ideal[1])
+
+geojson_features = []
+for polygon in polygons:
+    geojson_features.append({
+        "type": "Feature",
+        "geometry": {
+            "type": "Polygon",
+            "coordinates": [polygon]  # Encapsular en otra lista
+        },
+        "properties": {}
+    })
+
+geojson_data = {
+    "type": "FeatureCollection",
+    "features": geojson_features
+}
+
+# Crear la capa para Pydeck
+layer = pdk.Layer(
+    "GeoJsonLayer",
+    geojson_data,
+    pickable=True,
+    stroked=True,
+    filled=True,
+    lineWidthScale=20,
+    lineWidthMinPixels=1,
+    get_line_color=[0, 160, 0],
+    get_fill_color=[76, 175, 80,50],
+)
 # Crear el mapa con PyDeck
 st.pydeck_chart(pdk.Deck(
     map_style='mapbox://styles/mapbox/light-v9',
     initial_view_state=pdk.ViewState(
         latitude=39.4659,
         longitude=-0.3763,
-        zoom=12.40,
+        zoom=12,
         pitch=0,
     ),
     layers=[layer],
-), width=1200, height=800, use_container_width=True)
+), width=1200, height=600, use_container_width=True)
 st.markdown('</div>', unsafe_allow_html=True)
 
-# Acción del botón
 if calcular_btn:
-    st.subheader("Resultado")
-    tipo_vivienda = "alquiler" if opcion == "Alquiler"  else "compra" if opcion == "Compra" else "ninguno"
-    st.write(f"Has elegido una casa para **{tipo_vivienda}** con:")
-    st.write(f"- **{habitaciones} habitaciones**")
-    st.write(f"- **{baños} baños**")
-    st.write(f"- **{parking} plazas de parking**")
-    st.write("Gracias por utilizar nuestra herramienta para calcular tu casa ideal.")
+    top_barrios = barrio_ideal[3]
+    top_3_barrios = top_barrios["Distrito"].head(3).tolist()
+    col1, col2 = st.columns([1, 2])  # Ajusta el ancho relativo de las columnas
+    
+    with col1:
+        st.dataframe(top_barrios, width=400)
+    
+    with col2:
+        # Generar el texto con ChatGPT API
+        texto_generado =barrio_ideal[4]
+        st.markdown(f"""
+        <div style="color: #4CAF50; font-size: 18px; font-family: 'Poppins', sans-serif; margin-left: 20px;">
+            {texto_generado}
+        </div>
+        """, unsafe_allow_html=True)
