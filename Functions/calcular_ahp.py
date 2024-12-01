@@ -92,12 +92,16 @@ def calcular_barrio_ideal(
     df_top_3 = df_top_3.reset_index(drop=True)
 
     prompt = f"""
-        El mejor distrito es:
-        1. {top_3_barrios[0]}
-        Tienes que darme una descripcion detallada de porque es una zona ideal para vivir para en base a al
-        Coste,Transporte, servicios Publicos y Zonas Verdes. Di cosas reales de cada criterio pero no hagas mas de 
-        6 lineas por cada. La estructura debe ser, intro-criterio-criterio-criterio-criterio
-        """
+    El distrito con mejor puntuación es: {top_3_barrios[0]}.
+    Describe detalladamente por qué es una zona ideal para vivir considerando los siguientes criterios:
+    - Coste
+    - Transporte
+    - Servicios Públicos
+    - Zonas Verdes
+
+    Cada criterio debe estar integrado en un párrafo cohesionado, evitando enumeraciones. Usa ejemplos reales del distrito para apoyar la descripción, pero no te extiendas más de 250 palabras en total. 
+    Evita repetir ideas y no concluyas con frases como "en resumen". Mantén la descripción directa y relevante.
+    """
     openai.api_key = "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"
     response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
@@ -105,7 +109,7 @@ def calcular_barrio_ideal(
                 {"role": "system", "content": "Eres un experto en urbanismo y análisis de distritos."},
                 {"role": "user", "content": prompt}
             ],
-            max_tokens=350
+            max_tokens=400
         )    
     texto = response["choices"][0]["message"]["content"]
    
