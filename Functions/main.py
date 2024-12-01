@@ -7,7 +7,7 @@ from calcular_ahp import calcular_barrio_ideal
 from createPolygons import extraer_poligonos_sql
 
 # Configuración de la página
-st.set_page_config(page_title="Calcula tu casa ideal", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="District Serch", layout="wide", initial_sidebar_state="expanded")
 
 # Estilos globales y personalizados
 # Estilos globales y personalizados
@@ -180,7 +180,7 @@ with st.sidebar:
 
 
 # Botón funcional
-calcular_btn = st.sidebar.button("Calcular tu casa ideal")
+calcular_btn = st.sidebar.button("Obten tu lugar ideal")
 
 # Mapa centrado en Valencia con tamaño ajustado
 st.markdown('<div class="center-container">', unsafe_allow_html=True)
