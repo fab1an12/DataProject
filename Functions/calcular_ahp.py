@@ -40,7 +40,6 @@ def generar_pesos_criterios(
     # Normalizar la matriz y calcular los pesos
     matriz_normalizada = matriz / matriz.sum(axis=0)
     pesos = matriz_normalizada.mean(axis=1)
-    print(pesos)
     # Retornar los pesos
     return pesos
 
@@ -86,9 +85,9 @@ def calcular_barrio_ideal(
         "Distrito": matriz_zonas_verdes["Distrito"],  # Usamos los nombres de los barrios de cualquier matriz
         "Puntuación": puntuaciones_finales
     }).sort_values(by="Puntuación", ascending=False)
+    top_3_barrios = df_resultados["Distrito"].head(3).tolist()
 
     # Devolver el DataFrame ordenado
-    return df_resultados
+    return df_resultados, top_3_barrios, pesos_criterios
 
 print(calcular_barrio_ideal("Alquiler",generar_pesos_criterios(4,5,9,1/4,4,3)))
-
