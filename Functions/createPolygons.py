@@ -6,7 +6,7 @@ db_config = {
     "dbname": "dataproject",
     "user": "postgres",
     "password": "Welcome01",
-    "host": "localhost",
+    "host": "postgres",
     "port": 5432
 }
 

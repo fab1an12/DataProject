@@ -1,3 +1,4 @@
+import time
 import pandas as pd
 import requests
 from io import StringIO
@@ -10,16 +11,17 @@ SERVER_CONFIG = {
     "dbname": "postgres",
     "user": "postgres",
     "password": "Welcome01",
-    "host": "localhost",
+    "host": "postgres",
     "port": 5432
 }
+time.sleep(2)
 
 DB_NAME = "dataproject"
 DB_CONFIG = {
     "dbname": DB_NAME,
     "user": "postgres",
     "password": "Welcome01",
-    "host": "localhost",
+    "host": "postgres",
     "port": 5432
 }
 

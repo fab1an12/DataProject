@@ -1,3 +1,4 @@
+import time
 import pandas as pd
 import requests
 from io import StringIO
@@ -6,13 +7,14 @@ from psycopg2 import sql
 
 # URL del archivo CSV
 url_centros_educativos = "https://valencia.opendatasoft.com/api/explore/v2.1/catalog/datasets/centros-educativos-en-valencia/exports/csv?lang=es&timezone=Europe%2FBerlin&use_labels=true&delimiter=%3B"
+time.sleep(2)
 
 # Configuración de la conexión inicial para el servidor
 SERVER_CONFIG = {
     "dbname": "postgres",
     "user": "postgres",
     "password": "Welcome01",
-    "host": "localhost",
+    "host": "postgres",
     "port": 5432
 }
 
@@ -22,7 +24,7 @@ DB_CONFIG = {
     "dbname": DB_NAME,
     "user": "postgres",
     "password": "Welcome01",
-    "host": "localhost",
+    "host": "postgres",
     "port": 5432
 }
 

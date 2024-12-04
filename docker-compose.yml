@@ -2,7 +2,7 @@ version: '3.5'
  
 services:
   postgres:
-    container_name: postgres_container
+    container_name: postgres_container_dataproject
     image: postgres:12.1
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
@@ -17,7 +17,7 @@ services:
     restart: unless-stopped
    
   pgadmin:
-    container_name: pgadmin_container
+    container_name: pgadmin_container_dataproject
     image: dpage/pgadmin4:4.16
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
@@ -29,6 +29,17 @@ services:
     networks:
       - postgres
     restart: unless-stopped
+
+  python-script:
+    build: .
+    container_name: dataproject_app
+    depends_on:
+      - postgres
+    networks:
+      - postgres 
+    ports:
+      - "8501:8501"   
+
  
 networks:
   postgres:

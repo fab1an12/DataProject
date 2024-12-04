@@ -7,7 +7,7 @@ def obtener_coste_compra():
     "dbname": "dataproject",
     "user": "postgres",
     "password": "Welcome01",
-    "host": "localhost",
+    "host": "postgres",
     "port": 5432
     }
     query = """
@@ -37,7 +37,7 @@ def obtener_coste_alquiler():
     "dbname": "dataproject",
     "user": "postgres",
     "password": "Welcome01",
-    "host": "localhost",
+    "host": "postgres",
     "port": 5432
     }
     query = """
@@ -67,7 +67,7 @@ def obtener_transporte():
     "dbname": "dataproject",
     "user": "postgres",
     "password": "Welcome01",
-    "host": "localhost",
+    "host": "postgres",
     "port": 5432
     }
     query = """
@@ -99,7 +99,7 @@ def obtener_escuelas():
     "dbname": "dataproject",
     "user": "postgres",
     "password": "Welcome01",
-    "host": "localhost",
+    "host": "postgres",
     "port": 5432
     }
     query = """
@@ -131,7 +131,7 @@ def obtener_hospitales():
     "dbname": "dataproject",
     "user": "postgres",
     "password": "Welcome01",
-    "host": "localhost",
+    "host": "postgres",
     "port": 5432
     }
     query = """
@@ -163,7 +163,7 @@ def obtener_ocio():
     "dbname": "dataproject",
     "user": "postgres",
     "password": "Welcome01",
-    "host": "localhost",
+    "host": "postgres",
     "port": 5432
     }
     query = """
@@ -192,7 +192,7 @@ def obtener_zonas_verdes():
     "dbname": "dataproject",
     "user": "postgres",
     "password": "Welcome01",
-    "host": "localhost",
+    "host": "postgres",
     "port": 5432
     }
     query = """

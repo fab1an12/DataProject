@@ -3,6 +3,9 @@ import requests
 from io import StringIO
 import psycopg2
 from psycopg2 import sql
+import time
+
+time.sleep(20)
 
 # URL del archivo CSV
 url = "https://valencia.opendatasoft.com/api/explore/v2.1/catalog/datasets/districtes-distritos/exports/csv?lang=es&timezone=Europe%2FBerlin&use_labels=true&delimiter=%3B"
@@ -12,7 +15,7 @@ SERVER_CONFIG = {
     "dbname": "postgres",
     "user": "postgres",
     "password": "Welcome01",
-    "host": "localhost",
+    "host": "postgres",
     "port": 5432
 }
 
@@ -22,7 +25,7 @@ DB_CONFIG = {
     "dbname": DB_NAME,
     "user": "postgres",
     "password": "Welcome01",
-    "host": "localhost",
+    "host": "postgres",
     "port": 5432
 }
 
