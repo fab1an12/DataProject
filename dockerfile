@@ -16,4 +16,4 @@ COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 
 # Usar el script como comando por defecto
-CMD ["/app/entrypoint.sh"]
+CMD ["/bin/sh","/app/entrypoint.sh"]
