@@ -79,7 +79,9 @@ def crear_tabla_transporte_y_insertar_datos(df, db_config):
                     coddistbar INT,
                     coddistrit INT,
                     x FLOAT,
-                    y FLOAT
+                    y FLOAT,
+                    latitud FLOAT,
+                    longitud FLOAT
                 );
                 """
                 cursor.execute(create_table_query)
@@ -89,11 +91,14 @@ def crear_tabla_transporte_y_insertar_datos(df, db_config):
                 insert_query = """
                 INSERT INTO centros_sanitarios (
                     geo_point, geo_shape, nombre, tipo, financiaci, camas, direccion, 
-                    fecha, barrio, codbarrio, coddistbar, coddistrit, x, y
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    fecha, barrio, codbarrio, coddistbar, coddistrit, x, y, latitud, longitud
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 ;
                 """
                 for _, row in df.iterrows():
+                    geo_point_split = str(row['geo_point_2d']).split(',')
+                    latitud = float(geo_point_split[0]) if len(geo_point_split) > 1 else None
+                    longitud = float(geo_point_split[1]) if len(geo_point_split) > 1 else None
                     cursor.execute(insert_query, (
                         row['geo_point_2d'],
                         row['Geo Shape'],
@@ -108,7 +113,9 @@ def crear_tabla_transporte_y_insertar_datos(df, db_config):
                         row['coddistbar'],
                         row['coddistrit'],
                         row['X'],
-                        row['Y']
+                        row['Y'],
+                        latitud,
+                        longitud
                     ))
             connection.commit()
             print("Datos insertados correctamente.")

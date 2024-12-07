@@ -84,7 +84,9 @@ def crear_tabla_centros_y_insertar_datos(df, db_config):
         provincia VARCHAR(100),
         telef VARCHAR(50),
         fax VARCHAR(50),
-        mail VARCHAR(255)
+        mail VARCHAR(255),
+        latitud FLOAT,
+        longitud FLOAT
     );
     """
     cursor.execute(create_table_query)
@@ -94,14 +96,16 @@ def crear_tabla_centros_y_insertar_datos(df, db_config):
     insert_query = """
     INSERT INTO centros_educativos (
         Geo_Point, Geo_Shape, codcen, dlibre, dgenerica, despecific, regimen,
-        direccion, codpos, municipio, provincia, telef, fax, mail
+        direccion, codpos, municipio, provincia, telef, fax, mail, latitud, longitud
     ) VALUES (
         %s,%s,
-        %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+        %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
     );
     """
     for _, row in df.iterrows():
-
+        geo_point_split = str(row['Geo Point']).split(',')
+        latitud = float(geo_point_split[0]) if len(geo_point_split) > 1 else None
+        longitud = float(geo_point_split[1]) if len(geo_point_split) > 1 else None
         cursor.execute(insert_query, (
             row['Geo Point'],
             row['Geo Shape'],
@@ -116,7 +120,9 @@ def crear_tabla_centros_y_insertar_datos(df, db_config):
             row['provincia_'],
             row['telef'],
             row['fax'],
-            row['mail']
+            row['mail'],
+            latitud,
+            longitud
         ))
 
     connection.commit()
