@@ -276,11 +276,11 @@ if calcular_btn:
     with col1:
         st.dataframe(top_barrios, width=400)
     
-    with col2:
-        # Generar el texto con ChatGPT API
-        texto_generado =barrio_ideal[4]
-        st.markdown(f"""
-        <div style="color: #4CAF50; font-size: 18px; font-family: 'Poppins', sans-serif; margin-left: 20px;">
-            {texto_generado}
-        </div>
-        """, unsafe_allow_html=True)
+    # with col2:
+    #     # Generar el texto con ChatGPT API
+    #     texto_generado =barrio_ideal[4]
+    #     st.markdown(f"""
+    #     <div style="color: #4CAF50; font-size: 18px; font-family: 'Poppins', sans-serif; margin-left: 20px;">
+    #         {texto_generado}
+    #     </div>
+    #     """, unsafe_allow_html=True)

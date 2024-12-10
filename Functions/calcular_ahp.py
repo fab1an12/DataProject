@@ -91,29 +91,29 @@ def calcular_barrio_ideal(
     df_top_3.insert(0, "Ranking", range(1, len(df_top_3) + 1))
     df_top_3 = df_top_3.reset_index(drop=True)
 
-    prompt = f"""
-    El distrito con mejor puntuación es: {top_3_barrios[0]}.
-    Describe detalladamente por qué es una zona ideal para vivir considerando los siguientes criterios:
-    - Coste
-    - Transporte
-    - Servicios Públicos
-    - Zonas Verdes
+    # prompt = f"""
+    # El distrito con mejor puntuación es: {top_3_barrios[0]}.
+    # Describe detalladamente por qué es una zona ideal para vivir considerando los siguientes criterios:
+    # - Coste
+    # - Transporte
+    # - Servicios Públicos
+    # - Zonas Verdes
 
-    Cada criterio debe estar integrado en un párrafo cohesionado, evitando enumeraciones. Usa ejemplos reales del distrito para apoyar la descripción, pero no te extiendas más de 250 palabras en total. 
-    Evita repetir ideas y no concluyas con frases como "en resumen". Mantén la descripción directa y relevante.
-    """
-    openai.api_key = "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"
-    response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "Eres un experto en urbanismo y análisis de distritos."},
-                {"role": "user", "content": prompt}
-            ],
-            max_tokens=400
-        )    
-    texto = response["choices"][0]["message"]["content"]
+    # Cada criterio debe estar integrado en un párrafo cohesionado, evitando enumeraciones. Usa ejemplos reales del distrito para apoyar la descripción, pero no te extiendas más de 250 palabras en total. 
+    # Evita repetir ideas y no concluyas con frases como "en resumen". Mantén la descripción directa y relevante.
+    # """
+    # openai.api_key =
+    # response = openai.ChatCompletion.create(
+    #         model="gpt-3.5-turbo",
+    #         messages=[
+    #             {"role": "system", "content": "Eres un experto en urbanismo y análisis de distritos."},
+    #             {"role": "user", "content": prompt}
+    #         ],
+    #         max_tokens=400
+    #     )    
+    # texto = response["choices"][0]["message"]["content"]
    
     # Devolver el DataFrame ordenado
-    return df_resultados, top_3_barrios, pesos_criterios, df_top_3, texto
+    return df_resultados, top_3_barrios, pesos_criterios, df_top_3#, texto
 
 # print(calcular_barrio_ideal("Alquiler",generar_pesos_criterios(1,1,1,1,1,1)))

@@ -1,4 +1,4 @@
-# **Encuentra tu Distrito Ideal en Valencia**
+# **Encuentra tu Distrito Ideal en Valencia** [**DEMO**](https://drive.google.com/file/d/1PCg40U8FP02p3eZa_OrtrWyl5SXZKWb2/view?usp=sharing)
 
 > *Una herramienta basada en AHP para encontrar el distrito ideal en Valencia según las preferencias del usuario.*
 
@@ -26,6 +26,11 @@ La ciudad de Valencia está experimentando un aumento significativo en los preci
 
 - **Visualización**:  
   - Muestra en un mapa interactivo los 3 mejores distritos según las preferencias del usuario.
+
+> *Disclaimer:*
+  La herramienta tiene deshabilitada la funcionalidad que accede a la API de GPT. Para usar esa funcionalidad, eliminar los comentarios de 
+  los ficheros main.py y calcular_ahp.py e introducir una API Key de OpenAI.
+
 
 ---
 
