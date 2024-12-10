@@ -44,48 +44,15 @@ La ciudad de Valencia está experimentando un aumento significativo en los preci
 
 ---
 
-## **3. Estructura del Proyecto**
-```shell
-📦 DataProject
- ├── 📂 Data │ 
-    ├── Distritos_CodigosPostales.csv │ 
- ├── 📂 Functions │ 
-    ├──📂 ManageData │ 
-        ├── extractDistrict.py 
-        ├── extractParkFromOPMS.py │ 
-        ├── LoadDistrict.py │ 
-        ├── LoadEducation.py |
-        ├── LoadGreenArea.py │ 
-        ├── LoadHospitals.py |
-        ├── LoadPostalCode.py |
-        ├── LoadRentPrice.py 
-        ├── LoadSalesPrice.py 
-        ├── LoadTransport.py │ 
-    ├── calcular_ahp.py 
-    ├── createTop3Polygons.py
-    ├── greenZonesMatrix.py
-    ├── main.py
-    ├── PublicServiesMatrix.py
-    ├── querys.py 
-    ├── rentCostMatrix.py
-    ├── salesCostMatrix.py
- ├── docker-compose.yml
- ├── dockerfile
- ├── entrypoint.sh
- ├── querys.sql
- ├── README.md #Documentación
- ├── requirements.txt # Dependencias de Python
 
-```
+## **3. Cómo Empezar**
 
-## **4. Cómo Empezar**
-
-### **4.1. Requisitos Previos**
+### **3.1. Requisitos Previos**
 Asegúrate de tener instalado lo siguiente:
 - **Python** (versión 3.9 o superior).  
 - **Docker** (incluyendo Docker Compose).
 
-### **4.2. Instalación**
+### **3.2. Instalación**
 1. **Clonar el repositorio**:
    ```bash
    git clone <https://github.com/fab1an12/DataProject.git>
@@ -103,7 +70,7 @@ Asegúrate de tener instalado lo siguiente:
    http://localhost:8501
    ```
 
-## **5. Uso del Proyecto**
+## **4. Uso del Proyecto**
 
 ### **Flujo del Usuario**
 1. Abre el navegador y accede a [http://localhost:8501](http://localhost:8501) después de ejecutar el comando `docker-compose up --build`.  
@@ -120,7 +87,7 @@ Asegúrate de tener instalado lo siguiente:
 
 ---
 
-## **6. Flujo de Datos**
+## **5. Flujo de Datos**
 
 El flujo del programa sigue los siguientes pasos:
 
@@ -177,3 +144,92 @@ Una vez que los datos están en PostgreSQL, se procesan para generar matrices AH
      - Muestra los resultados, incluyendo un mapa interactivo con los distritos ideales y sus características.
 
 ---
+
+## **6. Visualización de datos**
+
+# Visualización en Tableau: Acceso y Funcionalidades
+
+## Cómo Acceder a Tableau
+
+Para utilizar el panel de visualización en Tableau, es necesario seguir los pasos a continuación:
+
+### 1. Preparar el Entorno
+- **Levantar el Docker Compose**: 
+  - Inicia el entorno donde se encuentra configurada la base de datos PostgreSQL con el siguiente comando:
+  
+    ```bash
+    docker-compose up -d
+    ```
+  - Asegúrate de que los contenedores estén funcionando correctamente y que PostgreSQL esté accesible.
+
+### 2. Configurar Tableau
+- **Conectar Tableau con PostgreSQL**:
+  - Abre Tableau Desktop.
+  - Selecciona **PostgreSQL** como tipo de conexión.
+  - Introduce las credenciales de conexión:
+    - **Host**: `localhost` (o la dirección IP si estás usando un servidor remoto).
+    - **Puerto**: `5432` (por defecto, verifica en tu configuración de Docker Compose).
+    - **Base de datos**: `dataproject`.
+    - **Usuario** y **Contraseña**: Las credenciales definidas en el archivo `docker-compose.yml`.
+  - Verifica la conexión y carga los datos.
+
+---
+
+## Funcionamiento de Tableau
+
+### Arquitectura del Dashboard
+El panel de Tableau está diseñado para ofrecer una visión clara y detallada de los datos almacenados en PostgreSQL. Funciona de la siguiente manera:
+
+1. **Carga de Datos**:
+   - Tableau utiliza consultas SQL generadas automáticamente para recuperar los datos necesarios desde la base de datos PostgreSQL.
+   - La estructura de los datos se actualiza dinámicamente según los filtros aplicados.
+   - En transporte_publico y centros_sanitarios, ejecuta la siguiente query:
+      ```sql
+      SELECT *
+      FROM transporte_publico
+      WHERE coddistrit NOT IN (17,18,19)
+      ```
+
+2. **Visualización Dinámica**:
+   - Los gráficos y mapas se ajustan automáticamente con base en los filtros seleccionados por el usuario.
+
+3. **Actualización en Tiempo Real**:
+   - Si se realizan cambios en los datos de PostgreSQL y se sincroniza Tableau, los gráficos se actualizan automáticamente.
+
+---
+
+## 3. Estructura del Dashboard
+
+El dashboard incluye varias secciones diseñadas para ofrecer una visión clara y detallada de los datos:
+
+### 3.1 Secciones Principales
+1. **Mapa Interactivo**:
+   - Visualiza la ubicación de los centros sanitarios por distrito.
+2. **Gráficos de Barras y Circular**:
+   - **Distribución de Transporte Público**: Muestra la cantidad de líneas EMT y estaciones de Metro Valencia.
+   - **Centros Educativos por Régimen**: Clasifica los centros en público, privado y concertado.
+   - **Distribución de Centros Sanitarios**: Muestra proporciones de consultorios y centros de salud.
+3. **Indicadores Clave**:
+   - **Precio de Venta**: Precio promedio de compra por metro cuadrado.
+   - **Precio de Alquiler**: Precio promedio de renta por metro cuadrado.
+
+### 3.2 Filtros Interactivos
+- **Filtro de Distrito**:
+  - Permite al usuario seleccionar un distrito específico para actualizar las visualizaciones dinámicamente.
+
+---
+
+## 4. Funcionalidades
+
+El dashboard está diseñado para ser intuitivo y altamente funcional. Las principales características incluyen:
+
+1. **Interacción Dinámica**:
+   - Selecciona un distrito para actualizar gráficos y mapas automáticamente.
+2. **Exploración Geográfica**:
+   - Identifica la ubicación exacta de hospitales y centros sanitarios.
+3. **Análisis Comparativo**:
+   - Compara diferentes distritos según criterios clave como transporte, educación y sanidad.
+4. **Visualización de Datos Económicos**:
+   - Consulta los precios de alquiler y venta directamente en el panel.
+
+
