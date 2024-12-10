@@ -45,7 +45,7 @@ La ciudad de Valencia está experimentando un aumento significativo en los preci
   
 
 2. **OpenMaps**  
-   - [Web Scrapping sobre cantidad de espacios verdes por distrito de Valencia](https://www.openstreetmap.org/#map=12/39.4780/-0.4237&layers=P)
+   - [Cantidad de espacios verdes por distrito de Valencia](https://www.openstreetmap.org/#map=12/39.4780/-0.4237&layers=P)
 
 ---
 
